@@ -111,7 +111,7 @@ QuickSort(int* array, int lIndex, int rIndex) {
 
 void
 Day01_1() {
-    FileStruct file = ReadFile("input");
+    FileStruct file = ReadFile("input_01");
 
     int col1[1024], col2[1024];
     int count = 0;
@@ -135,7 +135,7 @@ Day01_1() {
 
 void
 Day01_2() {
-    FileStruct file = ReadFile("input");
+    FileStruct file = ReadFile("input_01");
 
     int col1[1024], col2[1024];
     int count = 0;
@@ -162,8 +162,108 @@ Day01_2() {
     free(file.data);
 }
 
+void
+Day02_1() {
+    FileStruct file = ReadFile("input_02");
+
+    int count = 0;
+    char* rowPtr;
+    char *row = strtok_r(file.data, "\n", &rowPtr);
+    while (row != NULL) {
+        char* wordPtr;
+        char *word = strtok_r(row, " ", &wordPtr);
+        int direction = 0;
+        int lastNumber = -1;
+        ++count;
+        while (word != NULL) {
+            if (lastNumber == -1) {
+                sscanf(word, "%d", &lastNumber);
+            } else if (direction == 0) {
+                int nextNumber;
+                sscanf(word, "%d", &nextNumber);
+                direction = nextNumber - lastNumber;
+                if (abs(direction) < 1 || abs(direction) > 3) {
+                    --count;
+                    break;
+                }
+                lastNumber = nextNumber;
+            } else {
+                int nextNumber;
+                sscanf(word, "%d", &nextNumber);
+                int diff = nextNumber - lastNumber;
+                if ((diff * direction) <= 0 || abs(diff) < 1 || abs(diff) > 3) {
+                    --count;
+                    break;
+                }
+                lastNumber = nextNumber;
+            }
+            word = strtok_r(NULL, " ", &wordPtr);
+        }
+        row = strtok_r(NULL, "\n", &rowPtr);
+    }
+    printf("Day02-1 Result: %d\n", count);
+
+    free(file.data);
+}
+
+void
+Day02_2() {
+    FileStruct file = ReadFile("input_02");
+
+    int inputs[1000][16] = {0};
+    char *row, *word, *rowPtr, *wordPtr;
+    row = strtok_r(file.data, "\n", &rowPtr);
+    for (int i = 0; i < 1000; ++i) {
+        word = strtok_r(row, " ", &wordPtr);
+        for (int ii = 0; ii < 16; ++ii) {
+            sscanf(word, "%d", &inputs[i][ii]);
+            word = strtok_r(NULL, " ", &wordPtr);
+            if (word == NULL) break;
+        }
+        row = strtok_r(NULL, "\n", &rowPtr);
+    }
+
+    for (int i = 0; i < 1000; ++i) {
+        for (int ii = 0; ii < 16; ++ii) {
+            if (inputs[i][ii] == 0) break;
+            printf("%d ", inputs[i][ii]);
+        }
+        printf("\n");
+    }
+
+    int safeCount = 0;
+    for (int i = 0; i < 1000; ++i) {
+        int isSafe = 0;
+        for (int ignore = 0; ignore < 16; ++ignore) {
+            if (isSafe) break;
+            int line[16];
+            for (int ii = 0; ii < 16; ++ii) line[ii] = inputs[i][ii];
+            for (int ii = ignore; ii < 15; ++ii) line[ii] = line[ii+1];
+
+            int direction = line[1] - line[0];
+            for (int ii = 0; ii < 15; ++ii) {
+                if (line[ii+1] != 0) {
+                    int diff = line[ii+1] - line[ii];
+                    if ((diff * direction) < 0 || abs(diff) < 1 || abs(diff) > 3) {
+                        break;
+                    }
+                } else {
+                    isSafe = 1;
+                    break;
+                }
+            }
+        }
+        safeCount += isSafe;
+    }
+    printf("Day02-1 Result: %d\n", safeCount);
+
+    free(file.data);
+}
+
 int
 main() {
-    Day01_1();
-    Day01_2();
+    /* Day01_1(); */
+    /* Day01_2(); */
+    /* Day02_1(); */
+    Day02_2();
 }
