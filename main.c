@@ -260,10 +260,36 @@ Day02_2() {
     free(file.data);
 }
 
+void
+Day03_1() {
+    FileStruct file = ReadFile("input_03");
+    char* progress = file.data;
+
+    int sum = 0;
+    int doMul = 1;
+    while (*progress != '\0') {
+        if (*progress == 'd' && *(progress + 1) == 'o') {
+            if (*(progress + 2) == '(' && *(progress + 3) == ')') doMul = 1;
+            if (*(progress + 2) == 'n' && *(progress + 3) == '\'' && *(progress + 4) == 't' && *(progress + 5) == '(' && *(progress + 6) == ')') doMul = 0;
+        }
+        int num1 = 0, num2 = 0;
+        char c;
+        if (sscanf(progress, "mul(%d,%d%c", &num1, &num2, &c) == 3 && c == ')' && doMul == 1) {
+            printf("%d + (%d * %d) = %d\n", sum, num1, num2, sum + num1 * num2);
+            sum += num1 * num2;
+        }
+        ++progress;
+    }
+    printf("%d", sum);
+
+    free(file.data);
+}
+
 int
 main() {
     /* Day01_1(); */
     /* Day01_2(); */
     /* Day02_1(); */
-    Day02_2();
+    /* Day02_2(); */
+    Day03_1();
 }
