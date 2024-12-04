@@ -304,12 +304,104 @@ Day03_2() {
     free(file.data);
 }
 
+void
+Day04_1() {
+    FileStruct file = ReadFile("input_04");
+    int count = 0;
+    for (int i = 0; i < 140; ++i) {
+        for (int ii = 0; ii < 140; ++ii) {
+            int index = i * 141 + ii;
+            if (file.data[index] == 'X') {
+                /* right */
+                if ((ii + 3) < 140 &&
+                    file.data[index + 1] == 'M' &&
+                    file.data[index + 2] == 'A' &&
+                    file.data[index + 3] == 'S')
+                    ++count;
+                /* down */
+                if ((i + 3) < 140 &&
+                    file.data[(i+1)*141+ii] == 'M' &&
+                    file.data[(i+2)*141+ii] == 'A' &&
+                    file.data[(i+3)*141+ii] == 'S')
+                    ++count;
+                /* right-down */
+                if ((ii + 3) < 140 && (i + 3) < 140 &&
+                    file.data[(i+1)*141+ii+1] == 'M' &&
+                    file.data[(i+2)*141+ii+2] == 'A' &&
+                    file.data[(i+3)*141+ii+3] == 'S')
+                    ++count;
+                /* right-up */
+                if ((ii + 3) < 140 && (i - 3) >= 0 &&
+                    file.data[(i-1)*141+ii+1] == 'M' &&
+                    file.data[(i-2)*141+ii+2] == 'A' &&
+                    file.data[(i-3)*141+ii+3] == 'S')
+                    ++count;
+            } else if (file.data[index] == 'S') {
+                /* right */
+                if ((ii + 3) < 140 &&
+                    file.data[index + 1] == 'A' &&
+                    file.data[index + 2] == 'M' &&
+                    file.data[index + 3] == 'X')
+                    ++count;
+                /* down */
+                if ((i + 3) < 140 &&
+                    file.data[(i+1)*141+ii] == 'A' &&
+                    file.data[(i+2)*141+ii] == 'M' &&
+                    file.data[(i+3)*141+ii] == 'X')
+                    ++count;
+                /* right-down */
+                if ((ii + 3) < 140 && (i + 3) < 140 &&
+                    file.data[(i+1)*141+ii+1] == 'A' &&
+                    file.data[(i+2)*141+ii+2] == 'M' &&
+                    file.data[(i+3)*141+ii+3] == 'X')
+                    ++count;
+                /* right-up */
+                if ((ii + 3) < 140 && (i - 3) >= 0 &&
+                    file.data[(i-1)*141+ii+1] == 'A' &&
+                    file.data[(i-2)*141+ii+2] == 'M' &&
+                    file.data[(i-3)*141+ii+3] == 'X')
+                    ++count;
+
+            }
+        }
+    }
+
+    printf("Day04_1 Result: %d\n", count);
+    free(file.data);
+}
+
+void
+Day04_2() {
+    FileStruct file = ReadFile("input_04");
+    int count = 0;
+    for (int i = 1; i < 139; ++i) {
+        for (int ii = 1; ii < 139; ++ii) {
+            int index = i * 141 + ii;
+            if (file.data[index] == 'A' ) {
+                if (file.data[(i-1)*141+ii-1] == 'M' && file.data[(i+1)*141+ii+1] == 'S' &&
+                    file.data[(i-1)*141+ii+1] == 'M' && file.data[(i+1)*141+ii-1] == 'S') ++count;
+                if (file.data[(i-1)*141+ii-1] == 'S' && file.data[(i+1)*141+ii+1] == 'M' &&
+                    file.data[(i-1)*141+ii+1] == 'M' && file.data[(i+1)*141+ii-1] == 'S') ++count;
+                if (file.data[(i-1)*141+ii-1] == 'M' && file.data[(i+1)*141+ii+1] == 'S' &&
+                    file.data[(i-1)*141+ii+1] == 'S' && file.data[(i+1)*141+ii-1] == 'M') ++count;
+                if (file.data[(i-1)*141+ii-1] == 'S' && file.data[(i+1)*141+ii+1] == 'M' &&
+                    file.data[(i-1)*141+ii+1] == 'S' && file.data[(i+1)*141+ii-1] == 'M') ++count;
+            }
+        }
+    }
+
+    printf("Day04_2 Result: %d\n", count);
+    free(file.data);
+}
+
 int
 main() {
     /* Day01_1(); */
     /* Day01_2(); */
     /* Day02_1(); */
     /* Day02_2(); */
-    Day03_1();
-    Day03_2();
+    /* Day03_1(); */
+    /* Day03_2(); */
+    Day04_1();
+    Day04_2();
 }
