@@ -394,6 +394,126 @@ Day04_2() {
     free(file.data);
 }
 
+void
+Day05_1() {
+    FileStruct file = ReadFile("input_05");
+    int rules[1176][2];
+    char* readHead = strtok(file.data, "\n");
+    for (int i = 0; i < 1176; ++i) {
+        sscanf(readHead, "%d|%d", &rules[i][0], &rules[i][1]);
+        readHead = strtok(NULL, "\n");
+    }
+
+    int sum = 0;
+    for (int i = 0; i < 188; ++i) {
+        int line[64] = {0};
+        int count = 0;
+        char* wordPtr;
+        char* word = strtok_r(readHead, ",", &wordPtr);
+        while(word != NULL) {
+            sscanf(word, "%d", &line[count]);
+            ++count;
+            word = strtok_r(NULL, ",", &wordPtr);
+        }
+        int sound = 1;
+        for (int ii = 0; ii < 1176; ++ii) {
+            int leftPageIndex = -1, rightPageIndex = -1;
+            for (int iii = 0; iii < count; ++iii) {
+                if (line[iii] == rules[ii][0]) leftPageIndex = iii;
+                if (line[iii] == rules[ii][1]) rightPageIndex = iii;
+            }
+            if (leftPageIndex != -1 && rightPageIndex != -1 && leftPageIndex > rightPageIndex) {
+                sound = 0;
+                break;
+            }
+        }
+
+        /* printf("\n"); */
+        for (int ii = 0; ii < count; ++ii) {
+            /* printf("%d ", line[ii]); */
+        }
+
+        if (sound) {
+            /* printf("\n[Sound]: %d + %d = %d", sum, line[count/2], sum + line[count/2]); */
+            sum += line[count/2];
+        }
+        readHead = strtok(NULL, "\n");
+    }
+    /* printf("\n"); */
+
+    printf("Day05_1 Result: %d\n", sum);
+    free(file.data);
+}
+
+void
+Day05_2() {
+    FileStruct file = ReadFile("input_05");
+    int rules[1176][2];
+    char* readHead = strtok(file.data, "\n");
+    for (int i = 0; i < 1176; ++i) {
+        sscanf(readHead, "%d|%d", &rules[i][0], &rules[i][1]);
+        readHead = strtok(NULL, "\n");
+    }
+
+    int sum = 0;
+    for (int i = 0; i < 188; ++i) {
+        int line[64] = {0};
+        int count = 0;
+        char* wordPtr;
+        char* word = strtok_r(readHead, ",", &wordPtr);
+        while(word != NULL) {
+            sscanf(word, "%d", &line[count]);
+            ++count;
+            word = strtok_r(NULL, ",", &wordPtr);
+        }
+        int sound = 1;
+        for (int ii = 0; ii < 1176; ++ii) {
+            int leftPageIndex = -1, rightPageIndex = -1;
+            for (int iii = 0; iii < count; ++iii) {
+                if (line[iii] == rules[ii][0]) leftPageIndex = iii;
+                if (line[iii] == rules[ii][1]) rightPageIndex = iii;
+            }
+            if (leftPageIndex != -1 && rightPageIndex != -1 && leftPageIndex > rightPageIndex) {
+                sound = 0;
+                break;
+            }
+        }
+
+        if (!sound) {
+            for (int ii = 0; ii < count; ++ii) {
+                int beforeCount = 0, afterCount = 0;
+                for (int iii = 0; iii < 1176; ++iii) {
+                    if (rules[iii][0] == line[ii]) {
+                        for (int iiii = 0; iiii < count; ++iiii) {
+                            if (rules[iii][1] == line[iiii]) {
+                                ++afterCount;
+                                break;
+                            }
+                        }
+                    }
+                    if (rules[iii][1] == line[ii]) {
+                        for (int iiii = 0; iiii < count; ++iiii) {
+                            if (rules[iii][0] == line[iiii]) {
+                                ++beforeCount;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (abs(beforeCount - afterCount) <= 1) {
+                    sum += line[ii];
+                    break;
+                }
+            }
+        }
+        readHead = strtok(NULL, "\n");
+    }
+    /* printf("\n"); */
+
+    printf("Day05_2 Result: %d\n", sum);
+    free(file.data);
+}
+
 int
 main() {
     /* Day01_1(); */
@@ -402,6 +522,8 @@ main() {
     /* Day02_2(); */
     /* Day03_1(); */
     /* Day03_2(); */
-    Day04_1();
-    Day04_2();
+    /* Day04_1(); */
+    /* Day04_2(); */
+    Day05_1();
+    Day05_2();
 }
