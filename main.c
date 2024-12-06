@@ -514,6 +514,209 @@ Day05_2() {
     free(file.data);
 }
 
+void
+Day06_1() {
+    FileStruct file = ReadFile("input_06");
+
+    int dir[2] = {0,-1};
+    int path[130*130][2] = {0};
+    int pathCount = 1;
+    int pos[2] = {0,0};
+    for (int y = 0; y < 130; ++y) {
+        for (int x = 0; x < 130; ++x) {
+            if (file.data[y * 131 + x] == '^') {
+                pos[0] = x;
+                pos[1] = y;
+                path[0][0] = pos[0];
+                path[0][1] = pos[1];
+                break;
+            }
+        }
+    }
+    while (1) {
+        int newPos[2] = {pos[0] + dir[0], pos[1] + dir[1]};
+        if (newPos[0] < 0 || newPos[0] >= 130 || newPos[0] < 0 || newPos[1] >= 130) break;
+        char c = file.data[newPos[1] * 131 + newPos[0]];
+        if (c == '#') {
+            if (dir[0] == 0 && dir[1] == -1) {
+                dir[0] = 1;
+                dir[1] = 0;
+            } else if (dir[0] == 1 && dir[1] == 0) {
+                dir[0] = 0;
+                dir[1] = 1;
+            } else if (dir[0] == 0 && dir[1] == 1) {
+                dir[0] = -1;
+                dir[1] = 0;
+            } else if (dir[0] == -1 && dir[1] == 0) {
+                dir[0] = 0;
+                dir[1] = -1;
+            }
+        } else {
+            int exists = 0;
+            for (int i = 0; i < pathCount; ++i) {
+                if (path[i][0] == newPos[0] && path[i][1] == newPos[1]) {
+                    exists = 1;
+                    break;
+                }
+            }
+            if (!exists) {
+                path[pathCount][0] = newPos[0];
+                path[pathCount][1] = newPos[1];
+                ++pathCount;
+            }
+            pos[0] = newPos[0];
+            pos[1] = newPos[1];
+        }
+    }
+
+    /* Print map */
+    /* for (int y = 0; y < 130; ++y) { */
+    /*     for (int x = 0; x < 130; ++x) { */
+    /*         int pathed = 0; */
+    /*         for (int i = 0; i < pathCount; ++i) { */
+    /*             if (path[i][0] == x && path[i][1] == y) { */
+    /*                 pathed = 1; */
+    /*                 break; */
+    /*             } */
+    /*         } */
+    /*         if (pathed) printf("%c", 'X'); */
+    /*         else printf("%c", file.data[y*131+x]); */
+    /*     } */
+    /*     printf("\n"); */
+    /* } */
+
+    printf("Day06_1 Result: %d\n", pathCount);
+    free(file.data);
+}
+
+void
+Day06_2() {
+    FileStruct file = ReadFile("input_06");
+    int defaultPath[130*130][2] = {0};
+    int defaultPathCount = 1;
+    {
+        int dir[2] = {0,-1};
+        int pos[2] = {0,0};
+        for (int y = 0; y < 130; ++y) {
+            for (int x = 0; x < 130; ++x) {
+                if (file.data[y * 131 + x] == '^') {
+                    pos[0] = x;
+                    pos[1] = y;
+                    defaultPath[0][0] = pos[0];
+                    defaultPath[0][1] = pos[1];
+                    break;
+                }
+            }
+        }
+        while (1) {
+            int newPos[2] = {pos[0] + dir[0], pos[1] + dir[1]};
+            if (newPos[0] < 0 || newPos[0] >= 130 || newPos[0] < 0 || newPos[1] >= 130) break;
+            char c = file.data[newPos[1] * 131 + newPos[0]];
+            if (c == '#') {
+                if (dir[0] == 0 && dir[1] == -1) {
+                    dir[0] = 1;
+                    dir[1] = 0;
+                } else if (dir[0] == 1 && dir[1] == 0) {
+                    dir[0] = 0;
+                    dir[1] = 1;
+                } else if (dir[0] == 0 && dir[1] == 1) {
+                    dir[0] = -1;
+                    dir[1] = 0;
+                } else if (dir[0] == -1 && dir[1] == 0) {
+                    dir[0] = 0;
+                    dir[1] = -1;
+                }
+            } else {
+                int exists = 0;
+                for (int i = 0; i < defaultPathCount; ++i) {
+                    if (defaultPath[i][0] == newPos[0] && defaultPath[i][1] == newPos[1]) {
+                        exists = 1;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    defaultPath[defaultPathCount][0] = newPos[0];
+                    defaultPath[defaultPathCount][1] = newPos[1];
+                    ++defaultPathCount;
+                }
+                pos[0] = newPos[0];
+                pos[1] = newPos[1];
+            }
+        }
+    }
+
+    int (*path)[4] = (int (*)[4])malloc(130*130*4*sizeof(int[4]));
+    memset(path, 0, 130*130*4*sizeof(int[4]));
+    int loopCount = 0;
+    for (int i = 1; i < defaultPathCount; ++i) {
+        int x = defaultPath[i][0];
+        int y = defaultPath[i][1];
+        int dir[2] = {0,-1};
+        int pathCount = 1;
+        int pos[2] = {0,0};
+        int isOrigin = 0;
+        for (int yy = 0; yy < 130; ++yy) {
+            for (int xx = 0; xx < 130; ++xx) {
+                if (file.data[yy * 131 + xx] == '^') {
+                    if (xx == x && yy == y) isOrigin = 1;
+                    pos[0] = xx;
+                    pos[1] = yy;
+                    path[0][0] = pos[0];
+                    path[0][1] = pos[1];
+                    path[0][2] = dir[0];
+                    path[0][3] = dir[1];
+                    break;
+                }
+            }
+        }
+        if (isOrigin) break;
+        int looped = 0;
+        while (!looped) {
+            int newPos[2] = {pos[0] + dir[0], pos[1] + dir[1]};
+            if (newPos[0] < 0 || newPos[0] >= 130 || newPos[1] < 0 || newPos[1] >= 130) break;
+            char c = file.data[newPos[1] * 131 + newPos[0]];
+            if (c == '#' || (newPos[0] == x && newPos[1] == y)) {
+                if (dir[0] == 0 && dir[1] == -1) {
+                    dir[0] = 1;
+                    dir[1] = 0;
+                } else if (dir[0] == 1 && dir[1] == 0) {
+                    dir[0] = 0;
+                    dir[1] = 1;
+                } else if (dir[0] == 0 && dir[1] == 1) {
+                    dir[0] = -1;
+                    dir[1] = 0;
+                } else if (dir[0] == -1 && dir[1] == 0) {
+                    dir[0] = 0;
+                    dir[1] = -1;
+                }
+            } else {
+                for (int ii = 0; ii < pathCount; ++ii) {
+                    if (path[ii][0] == newPos[0] && path[ii][1] == newPos[1] &&
+                        path[ii][2] == dir[0] && path[ii][3] == dir[1]) {
+                        looped = 1;
+                        ++loopCount;
+                        break;
+                    }
+                }
+                if (!looped) {
+                    path[pathCount][0] = newPos[0];
+                    path[pathCount][1] = newPos[1];
+                    path[pathCount][2] = dir[0];
+                    path[pathCount][3] = dir[1];
+                    ++pathCount;
+                }
+                pos[0] = newPos[0];
+                pos[1] = newPos[1];
+            }
+        }
+        /* printf("%d/%d:%d loops\n", i, defaultPathCount,loopCount ); */
+    }
+
+    printf("Day06_2 Result: %d\n", loopCount);
+    free(file.data);
+    free(path);
+}
+
 int
 main() {
     /* Day01_1(); */
@@ -524,6 +727,8 @@ main() {
     /* Day03_2(); */
     /* Day04_1(); */
     /* Day04_2(); */
-    Day05_1();
-    Day05_2();
+    /* Day05_1(); */
+    /* Day05_2(); */
+    Day06_1();
+    Day06_2();
 }
