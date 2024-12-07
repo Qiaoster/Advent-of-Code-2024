@@ -718,6 +718,135 @@ Day06_2() {
 }
 
 int
+Pow(int base, int pow) {
+    int result = 1;
+    for (int i = 0; i < pow; ++i) {
+        result *= base;
+    }
+    return result;
+}
+
+void
+Day07_1() {
+    FileStruct file = ReadFile("input_07");
+    long long int sum = 0;
+    char* line = strtok(file.data, "\n");
+    while (line != NULL) {
+        char* wordPtr;
+        char* word = strtok_r(line, " ", &wordPtr);
+        long long int target;
+        int numbers[16];
+        int numCount = 0;
+        sscanf(word, "%lld:", &target);
+        word = strtok_r(NULL, " ", &wordPtr);
+        while (word != NULL) {
+            sscanf(word, "%d", &numbers[numCount]);
+            ++numCount;
+            word = strtok_r(NULL, " ", &wordPtr);
+        }
+        /* printf("%lld:", target); */
+        /* for (int i = 0; i < numCount; ++i) { */
+        /*     printf("%d,", numbers[i]); */
+        /* } */
+        /* printf("\n"); */
+
+        for (int i = 0; i < Pow(2, numCount); ++i) {
+            long long int result = numbers[0];
+            for (int ii = 1; ii < numCount; ++ii) {
+                if ((i >> ii) % 2 == 0) {
+                    result += numbers[ii];
+                } else {
+                    result *= numbers[ii];
+                }
+            }
+            if (result == target) {
+                /* printf("%lld %lld=%d", sum, target, numbers[0]); */
+                /* for (int ii = 1; ii < numCount; ++ii) { */
+                /*     if ((i >> ii) % 2 == 0) { */
+                /*         printf("+%d", numbers[ii]); */
+                /*     } else { */
+                /*         printf("*%d", numbers[ii]); */
+                /*     } */
+                /* } */
+                /* printf("\n"); */
+
+                sum += target;
+                break;
+            }
+        }
+        line = strtok(NULL, "\n");
+    }
+
+    printf("Day07_1 Result:%lld\n", sum);
+    free(file.data);
+}
+
+void
+Day07_2() {
+    FileStruct file = ReadFile("input_07");
+    long long int sum = 0;
+    char* line = strtok(file.data, "\n");
+    while (line != NULL) {
+        char* wordPtr;
+        char* word = strtok_r(line, " ", &wordPtr);
+        long long int target;
+        int numbers[16];
+        int numCount = 0;
+        sscanf(word, "%lld:", &target);
+        word = strtok_r(NULL, " ", &wordPtr);
+        while (word != NULL) {
+            sscanf(word, "%d", &numbers[numCount]);
+            ++numCount;
+            word = strtok_r(NULL, " ", &wordPtr);
+        }
+        /* printf("%lld:", target); */
+        /* for (int i = 0; i < numCount; ++i) { */
+        /*     printf("%d,", numbers[i]); */
+        /* } */
+        /* printf("\n"); */
+
+        for (int i = 0; i < Pow(3, numCount); ++i) {
+            long long int result = numbers[0];
+            for (int ii = 1; ii < numCount; ++ii) {
+                int operation = (i/(int)Pow(3,ii-1)) % 3;
+                if (operation == 0) {
+                    result += numbers[ii];
+                } else if (operation == 1){
+                    result *= numbers[ii];
+                } else {
+                    int digits = 1;
+                    while (numbers[ii] >= digits) {
+                        digits *= 10;
+                    }
+                    result = result * digits + numbers[ii];
+                }
+            }
+            if (result == target) {
+                /* printf("%lld %lld=%d", sum, target, numbers[0]); */
+                /* for (int ii = 1; ii < numCount; ++ii) { */
+                /*     if ((i >> ii) % 3 == 0) { */
+                /*         printf("+%d", numbers[ii]); */
+                /*     } else if ((i >> ii) % 3 == 1){ */
+                /*         printf("*%d", numbers[ii]); */
+                /*     } else { */
+                /*         printf("|%d", numbers[ii]); */
+                /*     } */
+                /* } */
+                /* printf("\n"); */
+
+                sum += target;
+                break;
+            }
+        }
+        line = strtok(NULL, "\n");
+    }
+
+    printf("Day07_2 Result:%lld\n", sum);
+    free(file.data);
+
+}
+
+int
 main() {
     /* Day01_1(); */
     /* Day01_2(); */
@@ -729,6 +858,8 @@ main() {
     /* Day04_2(); */
     /* Day05_1(); */
     /* Day05_2(); */
-    Day06_1();
-    Day06_2();
+    /* Day06_1(); */
+    /* Day06_2(); */
+    Day07_1();
+    Day07_2();
 }
