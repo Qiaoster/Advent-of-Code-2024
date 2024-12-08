@@ -846,6 +846,177 @@ Day07_2() {
 
 }
 
+void
+Day08_1() {
+    FileStruct file = ReadFile("input_08");
+    char map[50][50] = {0};
+    int antinodes[50][50] = {0};
+
+    int antenna[62][32][2];
+    int antennaCounts[62] = {0};
+    char* readHead = file.data;
+    for (int y = 0; y < 50; ++y) {
+        for (int x = 0; x < 50; ++x) {
+            map[x][y] = *readHead;
+            int index = -1;
+            if (map[x][y] >= '0' && map[x][y] <= '9') {
+                index = (int)(map[x][y]) - (int)('0');
+            } else if (map[x][y] >= 'A' && map[x][y] <= 'Z') {
+                index = (int)(map[x][y]) - (int)('A') + 10;
+            } else if (map[x][y] >= 'a' && map[x][y] <= 'z') {
+                index = (int)(map[x][y]) - (int)('a') + 36;
+            }
+            if (index != -1) {
+                antenna[index][antennaCounts[index]][0] = x;
+                antenna[index][antennaCounts[index]][1] = y;
+                ++antennaCounts[index];
+            }
+            ++readHead;
+        }
+        ++readHead;
+    }
+    /* for (int c = 0; c < 62; ++c) { */
+    /*     if (antennaCounts[c] > 0) { */
+    /*         printf("%d ", c); */
+    /*         for (int i = 0; i < antennaCounts[c]; ++i) { */
+    /*             printf("[%d,%d],", antenna[c][i][0], antenna[c][i][1]); */
+    /*         } */
+    /*         printf("\n"); */
+    /*     } */
+    /* } */
+
+    #define max(a,b) (a)>(b)?(a):(b)
+    #define min(a,b) (a)<(b)?(a):(b)
+    for (int c = 0; c < 62; ++c) {
+        for (int i = 0; i < antennaCounts[c]; ++i) {
+            for (int j = i+1; j < antennaCounts[c]; ++j) {
+                int x1 = antenna[c][i][0];
+                int y1 = antenna[c][i][1];
+                int x2 = antenna[c][j][0];
+                int y2 = antenna[c][j][1];
+                int dx = x2 - x1;
+                int dy = y2 - y1;
+                int x3 = x1 - dx;
+                int y3 = y1 - dy;
+                int x4 = x2 + dx;
+                int y4 = y2 + dy;
+
+                if (x3 >= 0 && x3 < 50 && y3 >= 0 && y3 < 50) antinodes[x3][y3] = 1;
+                if (x4 >= 0 && x4 < 50 && y4 >= 0 && y4 < 50) antinodes[x4][y4] = 1;
+            }
+        }
+    }
+
+    /* for (int y = 0; y < 50; ++y) { */
+    /*     for (int x = 0; x < 50; ++x) { */
+    /*         if (antinodes[x][y]) printf("[%c]", map[x][y]); */
+    /*         else printf(" %c ", map[x][y]); */
+    /*     } */
+    /*     printf("\n"); */
+    /* } */
+
+    int count = 0;
+    for (int y = 0; y < 50; ++y) {
+        for (int x = 0; x < 50; ++x) {
+            if (antinodes[x][y] == 1) ++count;
+        }
+    }
+
+    printf("Day08_1 Result: %d\n", count);
+    free(file.data);
+}
+
+void
+Day08_2() {
+    FileStruct file = ReadFile("input_08");
+    char map[50][50] = {0};
+    int antinodes[50][50] = {0};
+
+    int antenna[62][32][2];
+    int antennaCounts[62] = {0};
+    char* readHead = file.data;
+    for (int y = 0; y < 50; ++y) {
+        for (int x = 0; x < 50; ++x) {
+            map[x][y] = *readHead;
+            int index = -1;
+            if (map[x][y] >= '0' && map[x][y] <= '9') {
+                index = (int)(map[x][y]) - (int)('0');
+            } else if (map[x][y] >= 'A' && map[x][y] <= 'Z') {
+                index = (int)(map[x][y]) - (int)('A') + 10;
+            } else if (map[x][y] >= 'a' && map[x][y] <= 'z') {
+                index = (int)(map[x][y]) - (int)('a') + 36;
+            }
+            if (index != -1) {
+                antenna[index][antennaCounts[index]][0] = x;
+                antenna[index][antennaCounts[index]][1] = y;
+                ++antennaCounts[index];
+            }
+            ++readHead;
+        }
+        ++readHead;
+    }
+    for (int c = 0; c < 62; ++c) {
+        if (antennaCounts[c] > 0) {
+            printf("%d ", c);
+            for (int i = 0; i < antennaCounts[c]; ++i) {
+                printf("[%d,%d],", antenna[c][i][0], antenna[c][i][1]);
+            }
+            printf("\n");
+        }
+    }
+
+    #define max(a,b) (a)>(b)?(a):(b)
+    #define min(a,b) (a)<(b)?(a):(b)
+    for (int c = 0; c < 62; ++c) {
+        for (int i = 0; i < antennaCounts[c]; ++i) {
+            for (int j = i+1; j < antennaCounts[c]; ++j) {
+                int x1 = antenna[c][i][0];
+                int y1 = antenna[c][i][1];
+                int x2 = antenna[c][j][0];
+                int y2 = antenna[c][j][1];
+                int dx = x2 - x1;
+                int dy = y2 - y1;
+
+                int x0 = x1;
+                int y0 = y1;
+                while (x0 >= 0 && x0 < 50 && y0 >= 0 && y0 < 50) {
+                    antinodes[x0][y0] = 1;
+                    x0 -= dx;
+                    y0 -= dy;
+                }
+
+                int x3 = x2;
+                int y3 = y2;
+                while (x3 >= 0 && x3 < 50 && y3 >= 0 && y3 < 50) {
+                    antinodes[x3][y3] = 1;
+                    x3 += dx;
+                    y3 += dy;
+                }
+
+            }
+        }
+    }
+
+    for (int y = 0; y < 50; ++y) {
+        for (int x = 0; x < 50; ++x) {
+            if (antinodes[x][y]) printf("[%c]", map[x][y]);
+            else printf(" %c ", map[x][y]);
+        }
+        printf("\n");
+    }
+
+    int count = 0;
+    for (int y = 0; y < 50; ++y) {
+        for (int x = 0; x < 50; ++x) {
+            if (antinodes[x][y] == 1) ++count;
+        }
+    }
+
+    printf("Day08_2 Result: %d\n", count);
+    free(file.data);
+
+}
+
 int
 main() {
     /* Day01_1(); */
@@ -860,6 +1031,8 @@ main() {
     /* Day05_2(); */
     /* Day06_1(); */
     /* Day06_2(); */
-    Day07_1();
-    Day07_2();
+    /* Day07_1(); */
+    /* Day07_2(); */
+    Day08_1();
+    Day08_2();
 }
